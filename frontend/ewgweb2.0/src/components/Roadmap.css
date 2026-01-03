@@ -13,7 +13,7 @@
 }
 
 .score-label {
-  font-size: 12px;
+  font-size: 16px;
   /* color: var(--gray); */
 }
 
@@ -106,7 +106,7 @@
   margin-left: 4px;
   display: flex;
   align-items: center;
-  font-size: 12px;
+  font-size: 16px;
   /* color: var(--gray); */
 }
 
@@ -120,7 +120,7 @@
 }
 
 .prize-title {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   /* color: var(--gray); */
   text-decoration: underline;
