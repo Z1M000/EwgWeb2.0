@@ -1,0 +1,44 @@
+:root {
+  --navy: #002878;
+  --cornflower-blue: #6384c6;
+  --secondary-blue: #214794;
+
+  --orange-gold: #d28e00;
+  --gold: #d2b000;
+  --light-gold: #e8d585;
+  --sunglow: #ffcc33;
+
+  --pink: #e55b82;
+  /* --scarlet: #ed2100; */
+  --cinnabar: #e84b3d;
+
+  --white: #ffffff;
+  --off-white: #fcfcfc;
+  --white-yellow: #fbf9ed;
+  --light-gray: #efefef;
+
+  --off-black: #333333;
+  --gray: #5b5c5e;
+  --secondary-gray: #bdbfc1;
+
+  --title-font: "Dancing Script", sans-serif;
+  --body-font: "Lato", sans-serif;
+}
+
+body {
+  background-color: var(--off-white);
+  font-family: var(--body-font);
+  color: var(--off-black);
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 24px;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.body {
+  font-family: var(--body-font);
+  font-size: 16px;
+}

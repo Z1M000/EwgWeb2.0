@@ -1,0 +1,127 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: 20px;
+  padding: 12px 20px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.score-current {
+  color: var(--gold);
+}
+
+.score-label {
+  font-size: 12px;
+  /* color: var(--gray); */
+}
+
+.pb-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.pb-track {
+  position: relative;
+  height: 24px;
+  background: #eee;
+  border-radius: 999px;
+  overflow: visible;
+  margin-top: 36px;
+}
+
+.pb-track-bg {
+  position: relative;
+  height: 100%;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.pb-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--cornflower-blue);
+  /* border-radius: 999px; */
+  transition: width 2s ease;
+}
+
+.prize-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--white);
+  box-shadow: 0 0 0 2px var(--secondary-gray), 0 2px 6px rgba(0, 0, 0, 0.25);
+
+  z-index: 10;
+}
+
+.prize-dot .dot-text {
+  font-size: 8px;
+  font-weight: 700;
+  /* color: var(--gray); */
+}
+
+.prize-dot.achieved {
+  background: #74c476;
+  box-shadow: 0 0 0 2px #a4e2a7, 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.prize-dot.achieved .dot-text {
+  color: white;
+}
+
+.cart-marker {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -130%) scaleX(-1);
+  font-size: 20px;
+  transition: left 2s ease;
+}
+
+.goal-flag {
+  position: absolute;
+  top: 50%;
+  transform: translate(-60%, -130%);
+  font-size: 20px;
+}
+
+.prize-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.prize-item {
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  /* color: var(--gray); */
+}
+
+.prize-item.achieved {
+  color: #74c476;
+}
+
+.prize-check {
+  color: #74c476;
+  margin-left: 4px;
+}
+
+.prize-title {
+  font-size: 12px;
+  font-weight: 600;
+  /* color: var(--gray); */
+  text-decoration: underline;
+}

@@ -1,0 +1,28 @@
+.navbar {
+  background-color: var(--navy);
+}
+
+.nav-btn {
+  background-color: transparent;
+  color: var(--off-white);
+  border: 1px solid var(--off-white);
+  border-radius: 999px;
+  font-size: 14px;
+  font-family: var(--title-font);
+}
+
+.nav-btn:hover {
+  background-color: var(--off-white);
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.nav-btn:active {
+  transform: scale(0.96);
+}
+
+.brand-text {
+  font-family: var(--title-font);
+  font-size: 14px;
+  color: var(--off-white);
+}
