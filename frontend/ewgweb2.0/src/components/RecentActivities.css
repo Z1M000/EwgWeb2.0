@@ -3,7 +3,7 @@
 }
 
 .small-text {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--off-black) !important;
 }
 
@@ -15,7 +15,7 @@
 
 .ra-edit-btn {
   padding: 2px 10px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: var(--secondary-blue);
   color: var(--white);
   border: none;
@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: center;
   transform: translate(0%, 10%);
-  font-size: 14px;
+  font-size: 18px;
 
   color: var(--pink);
 
@@ -46,9 +46,14 @@
   background: rgba(0, 0, 0, 0.06);
 }
 
+.ra-th-text {
+  font-size: 12px;
+}
+
 .ra-add-row td {
   background: transparent !important;
   padding-top: 10px;
+  color: var(--off-black);
 }
 
 .ra-add-btn {

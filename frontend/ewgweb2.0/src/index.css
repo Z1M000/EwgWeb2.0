@@ -33,7 +33,7 @@ body {
 
 .title {
   font-family: var(--title-font);
-  font-size: 24px;
+  font-size: 32px;
   color: var(--navy);
   font-weight: 600;
 }

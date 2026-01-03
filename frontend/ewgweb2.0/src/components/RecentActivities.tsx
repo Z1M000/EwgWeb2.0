@@ -197,11 +197,11 @@ const RecentActivities = () => {
 
       <div className="table-responsive small-text mt-2">
         <table className="table table-borderless align-middle ra-table">
-          <thead className="border-bottom">
+          <thead className="border-bottom ra-th-text">
             <tr>
               {isEditing && <th></th>}
               <th>ACTIVITY</th>
-              <th className="text-end text-nowrap">PTS</th>
+              <th className="text-end text-nowrap">POINTS</th>
               <th className="text-end text-nowrap">TOTAL</th>
               <th className="text-end text-nowrap">DATE</th>
             </tr>
