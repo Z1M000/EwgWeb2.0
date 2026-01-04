@@ -1,4 +1,3 @@
-# backend/main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -17,6 +16,9 @@ print("connected to prize col")
 activities_col = db["Activities"]
 print("connected to activities col")      
 
+APP_VERSION = "cors-test-001"
+
+
 
 # --- FastAPI app ---
 app = FastAPI()
@@ -25,15 +27,27 @@ app = FastAPI()
 def root():
     return {"status": "ok"}
 
+@app.get("/version")
+def version():
+    return {"version": APP_VERSION}
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "https://ewgweb2.vercel.app",
+#         "http://localhost:5173",
+        
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://ewgweb2.vercel.app",
-        "http://localhost:5173",
-        
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
