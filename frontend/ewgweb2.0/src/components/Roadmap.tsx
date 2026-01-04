@@ -1,81 +1,146 @@
 import { useState } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import "./Roadmap.css";
 import { IoMdCheckbox } from "react-icons/io";
 import { FiMinusCircle } from "react-icons/fi";
 import { CgAddR } from "react-icons/cg";
-import "./Roadmap.css";
+import type { Prize } from "../App";
+import type { Dispatch, SetStateAction } from "react";
 
-// Zod 验证规则
-const PrizeRowSchema = z.object({
-  id: z.string(),
-  points: z.number().int().positive("Points must be > 0"),
-  label: z.string().min(1, "Prize name is required"),
-});
+interface Props {
+  curPoint: number;
+  prizes: Prize[];
+  setPrizes: Dispatch<SetStateAction<Prize[]>>;
+}
 
-const FormSchema = z.object({
-  prizes: z.array(PrizeRowSchema),
-});
+const tempId = () => `tmp_${crypto.randomUUID()}`;
 
-type FormData = z.infer<typeof FormSchema>;
-
-const Roadmap = () => {
+const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
   const [showModal, setShowModal] = useState(false);
-
-  // 表单初始化
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      prizes: [
-        { id: crypto.randomUUID(), points: 150, label: "Sticker Pack" },
-        { id: crypto.randomUUID(), points: 425, label: "Team Hat" },
-        { id: crypto.randomUUID(), points: 1150, label: "Team Hoodie" },
-      ],
-    },
-  });
-
-  // 动态数组管理
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "prizes",
-  });
-
-  const currentPoints = 219;
-  const goal = 1150;
-
-  const pct = Math.min((currentPoints / goal) * 100, 100);
+  const goal = prizes.length > 0 ? prizes[prizes.length - 1].points : 0;
+  const pct = Math.min((curPoint / goal) * 100, 100);
   const cartLeft = Math.min(Math.max(pct, 2), 98);
+  const [draftPrizes, setDraftPrizes] = useState<Prize[]>([]);
+  const [saving, setSaving] = useState(false);
 
-  // 添加新行
-  const addRow = () => {
-    append({
-      id: crypto.randomUUID(),
-      points: 0,
-      label: "",
-    });
+  const openEdit = () => {
+    setDraftPrizes(prizes.map((p) => ({ ...p })));
+    setShowModal(true);
   };
 
-  // 保存（带验证）
-  const onSubmit = (data: FormData) => {
-    console.log("✅ 验证通过！保存的数据：", data);
+  const cancelEdit = () => {
     setShowModal(false);
+    setDraftPrizes([]);
   };
 
-  const handleSave = handleSubmit(onSubmit);
+  const addRow = () => {
+    setDraftPrizes((prev) => [
+      ...prev,
+      { _id: tempId(), points: 0, label: "" } as Prize,
+    ]);
+  };
+
+  const deleteRow = (id: string) => {
+    setDraftPrizes((prev) => prev.filter((p) => p._id !== id));
+  };
+
+  const editPoints = (id: string, points: number) => {
+    setDraftPrizes((prev) =>
+      prev.map((p) => (p._id === id ? { ...p, points } : p))
+    );
+  };
+
+  const editLabel = (id: string, label: string) => {
+    setDraftPrizes((prev) =>
+      prev.map((p) => (p._id === id ? { ...p, label } : p))
+    );
+  };
+
+  const saveEdit = async () => {
+    setSaving(true);
+    try {
+      // 1) clean and sort draft prize
+      const cleaned = draftPrizes
+        .map((p) => ({
+          ...p,
+          points: Number(p.points),
+          label: (p.label ?? "").trim(),
+        }))
+        .filter((p) => p.label.length > 0 || p.points <= 0); // 不要空 label 的行（你也可以改成允许）
+
+      cleaned.sort((a, b) => a.points - b.points);
+
+      // 2) old prizes vs current cleaned draft prizes
+      const oldMap = new Map(prizes.map((p) => [p._id, p]));
+      const newMap = new Map(cleaned.map((p) => [p._id, p]));
+
+      const toDelete = prizes.filter((p) => !newMap.has(p._id));
+      const toCreate = cleaned.filter((p) => p._id.startsWith("tmp_")); // 新增行
+      const toUpdate = cleaned.filter((p) => {
+        if (p._id.startsWith("tmp_")) return false;
+        const old = oldMap.get(p._id);
+        return !!old && (old.points !== p.points || old.label !== p.label);
+      });
+
+      // 3) sync to backend
+      const reqs: Promise<any>[] = [];
+
+      // delete
+      for (const p of toDelete) {
+        reqs.push(
+          fetch(`http://localhost:8000/prizes/${p._id}`, { method: "DELETE" })
+        );
+      }
+
+      // create
+      for (const p of toCreate) {
+        reqs.push(
+          fetch("http://localhost:8000/prizes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ points: p.points, label: p.label }),
+          })
+        );
+      }
+
+      // update
+      for (const p of toUpdate) {
+        reqs.push(
+          fetch(`http://localhost:8000/prizes/${p._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ points: p.points, label: p.label }),
+          })
+        );
+      }
+
+      const responses = await Promise.all(reqs);
+      const bad = responses.find((r) => !r.ok);
+      if (bad) throw new Error("One of the save requests failed");
+
+      // 4) rerender updated prizes
+      const latest = await fetch("http://localhost:8000/prizes").then((r) =>
+        r.json()
+      );
+      setPrizes(latest);
+
+      setShowModal(false);
+      setDraftPrizes([]);
+    } catch (e) {
+      console.error(e);
+      alert("Save failed. Check console.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="card my-4 mx-2">
       <div className="d-flex align-items-center">
         <div>
-          <span className="title score-current">{currentPoints}</span>
+          <span className="title score-current">{curPoint}</span>
           <span className="score-label body"> / {goal} pts</span>
         </div>
-        <button className="ms-auto edit-btn" onClick={() => setShowModal(true)}>
+        <button className="ms-auto edit-btn" onClick={openEdit}>
           Edit
         </button>
       </div>
@@ -92,15 +157,15 @@ const Roadmap = () => {
           <div className="pb-fill" style={{ width: `${pct}%` }}></div>
         </div>
 
-        {fields.map((prize) => {
+        {prizes.map((prize) => {
           const ratio = prize.points / goal;
           const leftPct = Math.min(ratio * 100, 97.8);
 
-          const achieved = currentPoints >= prize.points;
+          const achieved = curPoint >= prize.points;
 
           return (
             <div
-              key={prize.id}
+              key={prize.points}
               className={`prize-dot ${achieved ? "achieved" : ""}`}
               style={{ left: `${leftPct}%` }}
             >
@@ -112,11 +177,11 @@ const Roadmap = () => {
 
       <div className="prize-list mt-3 mx-1">
         <span className="prize-title">Prizes Details</span>
-        {fields.map((prize) => {
-          const achieved = currentPoints >= prize.points;
+        {prizes.map((prize) => {
+          const achieved = curPoint >= prize.points;
           return (
             <div
-              key={prize.id}
+              key={prize.points}
               className={`prize-item ${achieved ? "achieved" : ""}`}
             >
               <span>
@@ -143,6 +208,10 @@ const Roadmap = () => {
                   ✕
                 </button>
               </div>
+              <div className="modal-hint">
+                The goal is the highest-point prize. Non-positive or empty
+                prizes are removed on save.
+              </div>
 
               {/* table */}
               <div className="table-responsive small-text mt-2 mx-2">
@@ -156,58 +225,40 @@ const Roadmap = () => {
                   </thead>
 
                   <tbody>
-                    {fields.map((item, index) => (
-                      <tr key={item.id}>
+                    {draftPrizes.map((item) => (
+                      <tr key={item._id}>
                         <td className="text-end">
                           <button
                             className="delete-btn"
-                            onClick={() => remove(index)}
+                            onClick={() => deleteRow(item._id)}
                           >
                             <FiMinusCircle />
                           </button>
                         </td>
 
                         <td>
-                          <Controller
-                            control={control}
-                            name={`prizes.${index}.points`}
-                            render={({ field }) => (
-                              <input
-                                {...field}
-                                className="cell-input px-1"
-                                type="number"
-                                placeholder="Enter points"
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
-                              />
-                            )}
+                          <input
+                            className="cell-input px-1"
+                            type="number"
+                            step="1"
+                            value={item.points}
+                            onChange={(e) => {
+                              const raw = e.target.value;
+                              const newPoints = raw === "" ? 0 : Number(raw);
+                              editPoints(item._id, newPoints);
+                            }}
                           />
-                          {errors.prizes?.[index]?.points && (
-                            <div className="text-danger small">
-                              {errors.prizes[index]?.points?.message}
-                            </div>
-                          )}
                         </td>
 
                         <td>
-                          <Controller
-                            control={control}
-                            name={`prizes.${index}.label`}
-                            render={({ field }) => (
-                              <input
-                                {...field}
-                                className="cell-input px-1"
-                                type="text"
-                                placeholder="Enter prize"
-                              />
-                            )}
+                          <input
+                            className="cell-input px-1"
+                            type="text"
+                            value={item.label}
+                            onChange={(e) =>
+                              editLabel(item._id, e.target.value)
+                            }
                           />
-                          {errors.prizes?.[index]?.label && (
-                            <div className="text-danger small">
-                              {errors.prizes[index]?.label?.message}
-                            </div>
-                          )}
                         </td>
                       </tr>
                     ))}
@@ -219,17 +270,21 @@ const Roadmap = () => {
               <div className="add-prize-row mb-3">
                 <CgAddR className="add-prize-btn" onClick={addRow} />
               </div>
-
               {/* footer */}
               <div className="modal-footer">
                 <button
                   className="cancel-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={cancelEdit}
+                  disabled={saving}
                 >
                   Cancel
                 </button>
-                <button className="save-btn" onClick={handleSave}>
-                  Save
+                <button
+                  className="save-btn"
+                  onClick={saveEdit}
+                  disabled={saving}
+                >
+                  {saving ? "Saving..." : "Save"}
                 </button>
               </div>
             </div>

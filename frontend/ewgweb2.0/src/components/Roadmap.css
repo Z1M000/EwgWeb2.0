@@ -155,8 +155,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 14px 12px 0px 12px;
+
   color: var(--navy);
 }
 
@@ -172,6 +172,13 @@
   border-radius: 999px;
   align-items: center;
   justify-content: center;
+}
+
+.modal-hint {
+  font-size: 14px;
+  padding: 0px 12px 8px 12px;
+  color: var(--pink);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .delete-btn {
