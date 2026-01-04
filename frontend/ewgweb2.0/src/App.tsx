@@ -4,6 +4,7 @@ import RecentActivities from "./components/RecentActivities";
 import Footer from "./components/Footer";
 import AboutUs from "./components/AboutUs";
 import { useState, useEffect } from "react";
+import { API_BASE } from "./config";
 
 export type Prize = {
   _id: string;
@@ -23,7 +24,7 @@ const App = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/prizes")
+    fetch(`${API_BASE}/prizes`)
       .then((res) => res.json())
       .then((data) => {
         setPrizes(data);
@@ -34,7 +35,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8000/activities")
+    fetch(`${API_BASE}/activities`)
       .then((res) => res.json())
       .then((data) => {
         setActivities(data);

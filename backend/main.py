@@ -21,6 +21,11 @@ print("connected to activities col")
 # --- FastAPI app ---
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

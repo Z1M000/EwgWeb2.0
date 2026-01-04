@@ -5,6 +5,7 @@ import { FiMinusCircle } from "react-icons/fi";
 import { CgAddR } from "react-icons/cg";
 import type { Prize } from "../App";
 import type { Dispatch, SetStateAction } from "react";
+import { API_BASE } from "../config";
 
 interface Props {
   curPoint: number;
@@ -86,15 +87,13 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
 
       // delete
       for (const p of toDelete) {
-        reqs.push(
-          fetch(`http://localhost:8000/prizes/${p._id}`, { method: "DELETE" })
-        );
+        reqs.push(fetch(`${API_BASE}/prizes/${p._id}`, { method: "DELETE" }));
       }
 
       // create
       for (const p of toCreate) {
         reqs.push(
-          fetch("http://localhost:8000/prizes", {
+          fetch(`${API_BASE}/prizes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ points: p.points, label: p.label }),
@@ -105,7 +104,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
       // update
       for (const p of toUpdate) {
         reqs.push(
-          fetch(`http://localhost:8000/prizes/${p._id}`, {
+          fetch(`${API_BASE}/prizes/${p._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ points: p.points, label: p.label }),
@@ -118,9 +117,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
       if (bad) throw new Error("One of the save requests failed");
 
       // 4) rerender updated prizes
-      const latest = await fetch("http://localhost:8000/prizes").then((r) =>
-        r.json()
-      );
+      const latest = await fetch(`${API_BASE}/prizes`).then((r) => r.json());
       setPrizes(latest);
 
       setShowModal(false);
