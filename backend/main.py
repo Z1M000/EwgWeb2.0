@@ -31,26 +31,26 @@ def root():
 def version():
     return {"version": APP_VERSION}
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "https://ewgweb2.vercel.app",
-#         "http://localhost:5173",
-        
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "https://ewgweb2.vercel.app",
+        "http://localhost:5173",
+        
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=False,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 class LoginRequest(BaseModel):
     username: str
@@ -69,31 +69,7 @@ class Activity(BaseModel):
     points: int
     date: str
 
-@app.get("/activities")
-def get_activities():
-    print("frontend wants all activities")
-    acts = []
-    for a in activities_col.find({}).sort("date", -1):
-        a["_id"] = str(a["_id"])
-        acts.append(a)
-    print(acts)
-    return acts
-
-@app.post("/activities")
-def store_activity(act: Activity):
-    print("Storing an activity to backend")
-    activities_col.insert_one(act.model_dump())
-    return {"status": "success"}
-
-@app.delete("/activities/{id}")
-def delete_activity(id: str):
-    result = activities_col.delete_one({"_id": ObjectId(id)})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Activity not found")
-    return {"status": "deleted"}
-
-
-
+# prize
 @app.get("/prizes")
 def getprizes():
     print("frontend wants all prizes")
@@ -106,7 +82,7 @@ def getprizes():
 
 @app.post("/prizes")
 def store_prize(prize: Prize):
-    print("Storing an activity to backend")
+    print("Storing a prize to backend")
     prizes_col.insert_one(prize.model_dump())
     return {"status": "success"}
 
@@ -121,4 +97,30 @@ def update_prize(id: str, prize: Prize):
 @app.delete("/prizes/{id}")
 def delete_prize(id: str):
     result = prizes_col.delete_one({"_id": ObjectId(id)})
+    return {"status": "deleted"}
+
+
+# activity
+@app.get("/activities")
+def get_activities():
+    print("frontend wants all activities")
+    acts = []
+    for a in activities_col.find({}).sort("date", -1):
+        a["_id"] = str(a["_id"])
+        acts.append(a)
+    print(acts)
+    return acts
+
+@app.post("/activities")
+def store_activity(act: Activity):
+    doc = act.model_dump()
+    result = activities_col.insert_one(doc)
+    doc["_id"] = str(result.inserted_id)
+    return doc
+
+@app.delete("/activities/{id}")
+def delete_activity(id: str):
+    result = activities_col.delete_one({"_id": ObjectId(id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Activity not found")
     return {"status": "deleted"}

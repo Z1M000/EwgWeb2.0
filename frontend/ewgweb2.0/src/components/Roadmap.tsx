@@ -13,13 +13,13 @@ interface Props {
   setPrizes: Dispatch<SetStateAction<Prize[]>>;
 }
 
-const tempId = () => `tmp_${crypto.randomUUID()}`;
+export const tempId = () => `tmp_${crypto.randomUUID()}`;
 
 const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const goal = prizes.length > 0 ? prizes[prizes.length - 1].points : 0;
   const pct = Math.min((curPoint / goal) * 100, 100);
-  const cartLeft = Math.min(Math.max(pct, 2), 98);
+  const cartLeft = Math.min(Math.max(pct, 0), 100);
   const [draftPrizes, setDraftPrizes] = useState<Prize[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -66,7 +66,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
           points: Number(p.points),
           label: (p.label ?? "").trim(),
         }))
-        .filter((p) => p.label.length > 0 || p.points <= 0); // 不要空 label 的行（你也可以改成允许）
+        .filter((p) => p.label.length > 0 && p.points > 0); // invalid entry will be deleted
 
       cleaned.sort((a, b) => a.points - b.points);
 
@@ -143,33 +143,34 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
       </div>
 
       <div className="pb-track">
-        <div className="goal-flag" style={{ left: "98%" }}>
-          ⛳
-        </div>
-        <div className="cart-marker" style={{ left: `${cartLeft}%` }}>
-          🛺
+        <div className="pb-dot-track">
+          <div className="goal-flag" style={{ left: "100%" }}>
+            ⛳
+          </div>
+          <div className="cart-marker" style={{ left: `${cartLeft}%` }}>
+            🛺
+          </div>
         </div>
 
         <div className="pb-track-bg">
           <div className="pb-fill" style={{ width: `${pct}%` }}></div>
+          <div className="pb-dot-track">
+            {prizes.map((prize) => {
+              const ratio = prize.points / goal;
+              const achieved = curPoint >= prize.points;
+
+              return (
+                <div
+                  key={prize.points}
+                  className={`prize-dot ${achieved ? "achieved" : ""}`}
+                  style={{ left: `${ratio * 100}%` }}
+                >
+                  <span className="dot-text">{prize.points}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-
-        {prizes.map((prize) => {
-          const ratio = prize.points / goal;
-          const leftPct = Math.min(ratio * 100, 97.8);
-
-          const achieved = curPoint >= prize.points;
-
-          return (
-            <div
-              key={prize.points}
-              className={`prize-dot ${achieved ? "achieved" : ""}`}
-              style={{ left: `${leftPct}%` }}
-            >
-              <span className="dot-text">{prize.points}</span>
-            </div>
-          );
-        })}
       </div>
 
       <div className="prize-list mt-3 mx-1">
@@ -207,7 +208,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
               </div>
               <div className="modal-hint">
                 The goal is the highest-point prize. Non-positive or empty
-                prizes are removed on save.
+                prizes will be removed on save.
               </div>
 
               {/* table */}
@@ -238,7 +239,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
                             className="cell-input px-1"
                             type="number"
                             step="1"
-                            value={item.points}
+                            value={item.points || ""}
                             onChange={(e) => {
                               const raw = e.target.value;
                               const newPoints = raw === "" ? 0 : Number(raw);

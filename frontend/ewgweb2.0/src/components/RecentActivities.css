@@ -27,25 +27,6 @@
   transform: scale(0.96);
 }
 
-.ra-delete-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transform: translate(0%, 10%);
-  font-size: 18px;
-
-  color: var(--pink);
-
-  /* width: 30px;
-  height: 30px; */
-  border: none;
-  background: transparent;
-}
-
-.ra-delete-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
 .ra-th-text {
   font-size: 12px;
 }
@@ -65,168 +46,20 @@
   background: rgba(0, 0, 0, 0.02);
 
   font-weight: 600;
+  color: var(--secondary-blue);
 }
 
 .ra-add-btn:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
-/* Modal */
-.ra-sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(1px);
-  z-index: 9998;
-}
-
-.ra-sheet {
-  position: fixed;
-  inset: 0;
+/* more modal */
+.modal-form {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  z-index: 9999;
+  flex-direction: column;
 }
 
-.ra-sheet-card {
-  width: min(520px, 100%);
-  background: var(--off-white);
-  border-radius: 18px 18px 18px 18px;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.ra-sheet-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.ra-sheet-title {
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: 0.2px;
-}
-
-.ra-sheet-x {
-  border: none;
-  background: transparent;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--navy);
-}
-
-.ra-sheet-x:hover {
-  background: rgba(0, 40, 120, 0.08);
-}
-
-.ra-sheet-body {
-  padding: 12px 14px;
-}
-
-.ra-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 6px;
-}
-
-.ra-input {
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  padding: 10px 12px;
-}
-
-.ra-input:focus {
-  border-color: rgba(0, 40, 120, 0.55);
-  box-shadow: 0 0 0 3px rgba(0, 40, 120, 0.14);
-}
-
-/* footer buttons */
-.ra-sheet-footer {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  padding: 12px 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.ra-btn {
-  border: none;
-  border-radius: 999px;
-  padding: 4px 12px;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.ra-btn-ghost {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--off-black);
-}
-
-.ra-btn-ghost:hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.ra-btn-primary {
-  background: var(--navy);
-  color: white;
-}
-
-.ra-combo {
-  position: relative;
-}
-
-.ra-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  z-index: 30;
-
-  background: white;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
-
-  max-height: 220px;
-  overflow: auto;
-}
-
-.ra-dropdown-item {
-  width: 100%;
-  border: none;
-  background: transparent;
-  padding: 10px 12px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  font-size: 13px;
-  text-align: left;
-}
-
-.ra-dropdown-item:hover {
-  background: rgba(0, 40, 120, 0.08); /* navy hover */
-}
-
-.ra-dd-name {
-  font-weight: 600;
-  color: var(--off-black);
-}
-
-.ra-dd-pts {
-  font-weight: 700;
-  color: var(--navy);
-  opacity: 0.9;
+.modal-form-title {
+  color: var(--secondary-blue);
+  font: 16px;
 }

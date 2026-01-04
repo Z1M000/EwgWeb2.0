@@ -46,6 +46,12 @@
   transition: width 2s ease;
 }
 
+.pb-dot-track {
+  position: absolute;
+  inset: 0;
+  margin: 0 12px;
+}
+
 .prize-dot {
   position: absolute;
   top: 50%;
@@ -196,11 +202,12 @@
   width: 100%;
   color: var(--off-black);
   border: 1px solid var(--secondary-gray);
-
   border-radius: 10px;
-  background: var(--off-white);
-
   outline: none;
+}
+.cell-input:focus {
+  border-color: var(--cornflower-blue);
+  box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.25);
 }
 
 .th-delete {
@@ -243,6 +250,10 @@
 
 .save-btn:active {
   transform: scale(0.96);
+}
+
+.save-btn:disabled {
+  background-color: var(--gray);
 }
 
 .cancel-btn {

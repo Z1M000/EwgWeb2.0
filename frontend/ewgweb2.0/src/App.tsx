@@ -51,7 +51,7 @@ const App = () => {
     <div>
       <Header />
       <Roadmap curPoint={curPoint} prizes={prizes} setPrizes={setPrizes} />
-      <RecentActivities />
+      <RecentActivities activities={activities} setActivities={setActivities} />
       <AboutUs />
       <Footer />
     </div>
