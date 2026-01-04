@@ -1,0 +1,10 @@
+.footer {
+  display: flex;
+  background-color: var(--navy);
+  justify-content: center;
+  align-items: center;
+  font-family: var(--title-font);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--white);
+}

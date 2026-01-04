@@ -1,0 +1,13 @@
+.icon {
+  height: 40px;
+  object-fit: contain;
+}
+
+.icon:active {
+  transform: scale(0.96);
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: space-between;
+}

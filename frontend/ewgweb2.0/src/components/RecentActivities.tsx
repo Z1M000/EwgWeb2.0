@@ -1,6 +1,7 @@
 import "./RecentActivities.css";
 import { useMemo, useState } from "react";
-import { MdOutlineDelete } from "react-icons/md";
+
+import { FiMinusCircle } from "react-icons/fi";
 
 // ============ Types ============
 type Activity = {
@@ -27,8 +28,6 @@ const ACTIVITY_LIBRARY = [
   { name: "Play day goal", points: 20 },
   { name: "Community Service", points: 50 },
   { name: "Close-out Drills", points: 10 },
-  { name: "Flamingo Drill", points: 31 },
-  { name: "World champion", points: 400 },
 ];
 
 const INITIAL_ACTIVITIES: Activity[] = [
@@ -188,7 +187,7 @@ const RecentActivities = () => {
         <span className="title">Recent Activities</span>
         <button
           type="button"
-          className="ra-edit-btn"
+          className="edit-btn"
           onClick={() => setIsEditing((v) => !v)}
         >
           {isEditing ? "Done" : "Edit"}
@@ -233,7 +232,7 @@ const RecentActivities = () => {
                       aria-label={`Delete ${item.activity}`}
                       title="Delete"
                     >
-                      <MdOutlineDelete />
+                      <FiMinusCircle />
                     </button>
                   </td>
                 )}
