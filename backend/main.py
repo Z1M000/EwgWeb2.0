@@ -31,6 +31,7 @@ app.add_middleware(
     allow_origins=[
         "https://ewgweb2.vercel.app",
         "http://localhost:5173",
+        
     ],
     allow_credentials=True,
     allow_methods=["*"],
