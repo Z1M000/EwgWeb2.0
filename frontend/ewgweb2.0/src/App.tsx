@@ -30,10 +30,8 @@ const App = () => {
   useEffect(() => {
     const boot = async () => {
       let delayTimer: number | undefined;
-      let overlayShown = false;
 
       delayTimer = window.setTimeout(() => {
-        overlayShown = true;
         setBooting(true);
         setBootMsg("Connecting to Server…");
       }, 1000);
