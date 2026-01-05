@@ -1,0 +1,46 @@
+.boot-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.boot-card {
+  width: min(320px, 80vw);
+  background: white;
+  border-radius: 14px;
+  padding: 24px 18px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.boot-spinner {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  border: 3px solid var(--secondary-gray);
+  border-top-color: var(--secondary-blue);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.boot-text {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--secondary-blue);
+}
+
+.boot-subtext {
+  font-size: 16px;
+  color: var(--gray);
+}

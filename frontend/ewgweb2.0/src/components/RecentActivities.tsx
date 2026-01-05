@@ -1,5 +1,5 @@
 import "./RecentActivities.css";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FiMinusCircle } from "react-icons/fi";
 import type { Activity } from "../App";
 import type { Dispatch, SetStateAction } from "react";
@@ -11,28 +11,50 @@ interface Props {
   setActivities: Dispatch<SetStateAction<Activity[]>>;
 }
 
-// ============ Constants ============
-// const ACTIVITY_LIBRARY = [
-//   { name: "Team Win", points: 100 },
-//   { name: "Team Round Under-Par", points: 50 },
-//   { name: "Beat Scoring Record", points: 100 },
-//   { name: "Team Tournament Goal", points: 25 },
-//   { name: "Play day goal", points: 20 },
-//   { name: "Community Service", points: 50 },
-//   { name: "Close-out Drills", points: 10 },
-// ];
+// dropdown options
+const presetActivities = [
+  { name: "Team Win", points: 100 },
+  { name: "Team Round Under-Par", points: 50 },
+  { name: "Beat Scoring Record", points: 100 },
+  { name: "Team Tournament Goal", points: 25 },
+  { name: "Play day goal", points: 20 },
+  { name: "Close-out Drills", points: 10 },
+  { name: "Community Service", points: 50 },
+  { name: "Team Top 5 in D1", points: 50 },
+  { name: "Ryder Cup", points: 5 },
+];
 
 const RecentActivities = ({ activities, setActivities }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [savingActivity, setSavingActivity] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [newActivity, setNewActivity] = useState<Omit<Activity, "_id">>({
     activity: "",
     points: 0,
     date: "",
   });
-  let runningTotal = 0;
 
+  // for dropdown preset activities
+  const filteredOptions = presetActivities.filter((opt) =>
+    opt.name.toLowerCase().includes(newActivity.activity.toLowerCase())
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!dropdownRef.current) return;
+      if (!dropdownRef.current.contains(e.target as Node)) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // for rendering activity tables and delete activities
+  let runningTotal = 0;
   const activitiesWithTotal = [...activities]
     .reverse()
     .map((item) => {
@@ -49,6 +71,22 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
     return `${month}/${day}/${year}`;
   };
 
+  const deleteRow = async (id: string) => {
+    // optimistic: update ui first
+    setActivities((prev) => prev.filter((a) => a._id !== id));
+
+    const res = await fetch(`${API_BASE}/activities/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      console.error("Delete failed:", await res.text());
+      // if failed still render backend real data
+      const refreshed = await fetchActivities();
+      setActivities(refreshed);
+    }
+  };
+
+  // for add activities
   const canSave =
     newActivity.activity.trim().length > 0 &&
     newActivity.points > 0 &&
@@ -71,21 +109,6 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
     if (!res.ok) throw new Error(await res.text());
     return res.json(); // backend returns an Activity object
   }
-
-  const deleteRow = async (id: string) => {
-    // optimistic: update ui first
-    setActivities((prev) => prev.filter((a) => a._id !== id));
-
-    const res = await fetch(`${API_BASE}/activities/${id}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) {
-      console.error("Delete failed:", await res.text());
-      // if failed still render backend real data
-      const refreshed = await fetchActivities();
-      setActivities(refreshed);
-    }
-  };
 
   const saveActivity = async () => {
     if (!canSave) return;
@@ -125,6 +148,7 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
     }
   };
 
+  // finally! return the main component!
   return (
     <div className="card my-4 mx-2">
       <div className="ra-header">
@@ -211,24 +235,56 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                   </button>
                 </div>
                 <div className="modal-hint">
-                  Empty or non-positive activity can't be added
+                  Empty or non-positive activity cannot be added
                 </div>
                 <div className="modal-form m-3">
                   <span className="modal-form-title mb-2">Activity Name</span>
-                  <input
-                    className="cell-input px-3 py-2 mb-3 "
-                    type="text"
-                    name="activity"
-                    placeholder="Type activity"
-                    value={newActivity.activity}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({
-                        ...prev,
-                        activity: e.target.value,
-                      }))
-                    }
-                  />
-                  <span className="modal-form-title mb-2">Points</span>
+                  <div className="dropdown-wrapper" ref={dropdownRef}>
+                    <input
+                      className="cell-input px-3 py-2 "
+                      type="text"
+                      name="activity"
+                      placeholder="Type activity"
+                      value={newActivity.activity}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setNewActivity((prev) => ({
+                          ...prev,
+                          activity: value,
+                        }));
+                        if (value.trim() === "") {
+                          setShowOptions(false);
+                        } else {
+                          setShowOptions(true);
+                        }
+                      }}
+                      onClick={() => {
+                        if (newActivity.activity === "") setShowOptions(true);
+                      }}
+                    />
+                    {showOptions && filteredOptions.length > 0 && (
+                      <div className="dropdown-options">
+                        {filteredOptions.map((opt, index) => (
+                          <div
+                            key={index}
+                            className="dropdown-option"
+                            onClick={() => {
+                              setNewActivity((prev) => ({
+                                ...prev,
+                                activity: opt.name,
+                                points: opt.points,
+                              }));
+                              setShowOptions(false);
+                            }}
+                          >
+                            {opt.name} : {opt.points} pts
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <span className="modal-form-title mt-3 mb-2">Points</span>
                   <input
                     className="cell-input px-3 py-2 mb-3"
                     type="number"
