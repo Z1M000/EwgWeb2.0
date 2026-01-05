@@ -12,15 +12,15 @@ interface Props {
 }
 
 // ============ Constants ============
-const ACTIVITY_LIBRARY = [
-  { name: "Team Win", points: 100 },
-  { name: "Team Round Under-Par", points: 50 },
-  { name: "Beat Scoring Record", points: 100 },
-  { name: "Team Tournament Goal", points: 25 },
-  { name: "Play day goal", points: 20 },
-  { name: "Community Service", points: 50 },
-  { name: "Close-out Drills", points: 10 },
-];
+// const ACTIVITY_LIBRARY = [
+//   { name: "Team Win", points: 100 },
+//   { name: "Team Round Under-Par", points: 50 },
+//   { name: "Beat Scoring Record", points: 100 },
+//   { name: "Team Tournament Goal", points: 25 },
+//   { name: "Play day goal", points: 20 },
+//   { name: "Community Service", points: 50 },
+//   { name: "Close-out Drills", points: 10 },
+// ];
 
 const RecentActivities = ({ activities, setActivities }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
