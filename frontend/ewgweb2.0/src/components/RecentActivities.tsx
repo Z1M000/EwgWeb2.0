@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { FiMinusCircle } from "react-icons/fi";
 import type { Activity } from "../App";
 import type { Dispatch, SetStateAction } from "react";
-import { tempId } from "./Roadmap";
 import { API_BASE } from "../config";
 
 interface Props {
@@ -111,43 +110,26 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
   }
 
   const saveActivity = async () => {
-    if (!canSave) return;
+    if (!canSave || savingActivity) return;
 
     setSavingActivity(true);
 
-    // ui update first
-    const optimistic: Activity = {
-      _id: tempId(),
-      activity: newActivity.activity.trim(),
-      points: newActivity.points,
-      date: newActivity.date.replaceAll("-", "/"),
-    };
-    setActivities((prev) => [optimistic, ...prev]);
-
     try {
-      const created = await createActivity({
-        activity: optimistic.activity,
-        points: optimistic.points,
-        date: optimistic.date,
+      await createActivity({
+        activity: newActivity.activity.trim(),
+        points: newActivity.points,
+        date: newActivity.date.replaceAll("-", "/"),
       });
-
-      // then show the real data
-      setActivities((prev) =>
-        prev.map((a) => (a._id === optimistic._id ? created : a))
-      );
-    } catch (e) {
-      console.error("Save failed:", e);
-      // if failed, remove the temp activity and rerender
-      setActivities((prev) => prev.filter((a) => a._id !== optimistic._id));
       const refreshed = await fetchActivities();
       setActivities(refreshed);
-    } finally {
       setShowModal(false);
-      setSavingActivity(false);
       setNewActivity({ activity: "", points: 0, date: "" });
+    } catch (e) {
+      console.error("Save failed:", e);
+    } finally {
+      setSavingActivity(false);
     }
   };
-
   // finally! return the main component!
   return (
     <div className="card my-4 mx-2">
