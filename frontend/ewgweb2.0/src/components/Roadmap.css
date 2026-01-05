@@ -188,14 +188,21 @@
 }
 
 .delete-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  transform: translate(0%, 10%);
   font-size: 18px;
   color: var(--pink);
   border: none;
   background: transparent;
+}
+
+.delete-btn:hover {
+  color: var(--scarlet);
+}
+
+.delete-btn:active {
+  transform: scale(0.9);
 }
 
 .cell-input {
@@ -262,6 +269,7 @@
   padding: 4px 12px;
   font-weight: 700;
   font-size: 14px;
+  color: var(--gray);
 }
 
 .cancel-btn:active {

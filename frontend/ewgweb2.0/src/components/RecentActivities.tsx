@@ -179,7 +179,7 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                   className={index % 2 === 1 ? "yellow-row" : ""}
                 >
                   {isEditing && (
-                    <td className="text-center">
+                    <td>
                       <button
                         type="button"
                         className="delete-btn"
@@ -200,125 +200,125 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
             })}
           </tbody>
         </table>
+      </div>
 
-        {/* modal */}
-        {showModal && (
-          <>
-            <div className="modal-backdrop" />
-            <div className="modal-sheet">
-              <div className="modal-card">
-                <div className="modal-header">
-                  <div className="modal-title">Add an Activity</div>
-                  <button
-                    className="modal-close-btn"
-                    onClick={() => setShowModal(false)}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="modal-hint">
-                  Empty or non-positive activity cannot be added
-                </div>
-                <div className="modal-form m-3">
-                  <span className="modal-form-title mb-2">Activity Name</span>
-                  <div className="dropdown-wrapper" ref={dropdownRef}>
-                    <input
-                      className="cell-input px-3 py-2 "
-                      type="text"
-                      name="activity"
-                      placeholder="Type activity"
-                      value={newActivity.activity}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setNewActivity((prev) => ({
-                          ...prev,
-                          activity: value,
-                        }));
-                        if (value.trim() === "") {
-                          setShowOptions(false);
-                        } else {
-                          setShowOptions(true);
-                        }
-                      }}
-                      onClick={() => {
-                        if (newActivity.activity === "") setShowOptions(true);
-                      }}
-                    />
-                    {showOptions && filteredOptions.length > 0 && (
-                      <div className="dropdown-options">
-                        {filteredOptions.map((opt, index) => (
-                          <div
-                            key={index}
-                            className="dropdown-option"
-                            onClick={() => {
-                              setNewActivity((prev) => ({
-                                ...prev,
-                                activity: opt.name,
-                                points: opt.points,
-                              }));
-                              setShowOptions(false);
-                            }}
-                          >
-                            {opt.name} : {opt.points} pts
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <span className="modal-form-title mt-3 mb-2">Points</span>
+      {/* modal */}
+      {showModal && (
+        <>
+          <div className="modal-backdrop" />
+          <div className="modal-sheet">
+            <div className="modal-card">
+              <div className="modal-header">
+                <div className="modal-title">Add an Activity</div>
+                <button
+                  className="modal-close-btn"
+                  onClick={() => setShowModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="modal-hint">
+                Empty or non-positive activity cannot be added
+              </div>
+              <div className="modal-form m-3">
+                <span className="modal-form-title mb-2">Activity Name</span>
+                <div className="dropdown-wrapper" ref={dropdownRef}>
                   <input
-                    className="cell-input px-3 py-2 mb-3"
-                    type="number"
-                    step="1"
-                    value={newActivity.points || ""}
-                    name="points"
-                    placeholder="e.g., 25"
-                    onChange={(e) =>
+                    className="cell-input px-3 py-2 "
+                    type="text"
+                    name="activity"
+                    placeholder="Type activity"
+                    value={newActivity.activity}
+                    onChange={(e) => {
+                      const value = e.target.value;
                       setNewActivity((prev) => ({
                         ...prev,
-                        points: Number(e.target.value),
-                      }))
-                    }
-                  />
-                  <span className="modal-form-title mb-2">Date</span>
-                  <input
-                    className="cell-input px-3 py-2 mb-2"
-                    type="date"
-                    name="date"
-                    value={newActivity.date}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({
-                        ...prev,
-                        date: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button
-                    className="cancel-btn"
-                    onClick={() => {
-                      setShowModal(false);
-                      setNewActivity({ activity: "", points: 0, date: "" });
+                        activity: value,
+                      }));
+                      if (value.trim() === "") {
+                        setShowOptions(false);
+                      } else {
+                        setShowOptions(true);
+                      }
                     }}
-                    disabled={savingActivity}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="save-btn"
-                    onClick={saveActivity}
-                    disabled={savingActivity || !canSave}
-                  >
-                    {savingActivity ? "Adding..." : "Add"}
-                  </button>
+                    onClick={() => {
+                      if (newActivity.activity === "") setShowOptions(true);
+                    }}
+                  />
+                  {showOptions && filteredOptions.length > 0 && (
+                    <div className="dropdown-options">
+                      {filteredOptions.map((opt, index) => (
+                        <div
+                          key={index}
+                          className="dropdown-option"
+                          onClick={() => {
+                            setNewActivity((prev) => ({
+                              ...prev,
+                              activity: opt.name,
+                              points: opt.points,
+                            }));
+                            setShowOptions(false);
+                          }}
+                        >
+                          {opt.name} : {opt.points} pts
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                <span className="modal-form-title mt-3 mb-2">Points</span>
+                <input
+                  className="cell-input px-3 py-2 mb-3"
+                  type="number"
+                  step="1"
+                  value={newActivity.points || ""}
+                  name="points"
+                  placeholder="e.g., 25"
+                  onChange={(e) =>
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      points: Number(e.target.value),
+                    }))
+                  }
+                />
+                <span className="modal-form-title mb-2">Date</span>
+                <input
+                  className="cell-input px-3 py-2 mb-2"
+                  type="date"
+                  name="date"
+                  value={newActivity.date}
+                  onChange={(e) =>
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="cancel-btn"
+                  onClick={() => {
+                    setShowModal(false);
+                    setNewActivity({ activity: "", points: 0, date: "" });
+                  }}
+                  disabled={savingActivity}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="save-btn"
+                  onClick={saveActivity}
+                  disabled={savingActivity || !canSave}
+                >
+                  {savingActivity ? "Adding..." : "Add"}
+                </button>
               </div>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
