@@ -7,7 +7,10 @@ const MAX_TRIES = 10;
 export async function pingBackend(base: string): Promise<void> {
   // local dev to mimick cold start
   if (import.meta.env.DEV) {
-    await sleep(1200);
+    const delays = [0, 100, 300];
+    const delay = delays[Math.floor(Math.random() * delays.length)];
+    console.log(`[pingBackend] mock cold start ${delay}ms`);
+    await sleep(delay);
     return;
   }
 

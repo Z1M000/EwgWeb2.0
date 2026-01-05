@@ -22,23 +22,24 @@ export type Activity = {
 };
 
 const App = () => {
-  const [booting, setBooting] = useState(true);
+  const [booting, setBooting] = useState(false);
   const [bootMsg, setBootMsg] = useState("");
   const [prizes, setPrizes] = useState<Prize[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
     const boot = async () => {
-      try {
+      let delayTimer: number | undefined;
+      let overlayShown = false;
+
+      delayTimer = window.setTimeout(() => {
+        overlayShown = true;
         setBooting(true);
         setBootMsg("Connecting to Server…");
+      }, 1000);
 
-        const t0 = performance.now();
+      try {
         await pingBackend(API_BASE);
-        const dt = performance.now() - t0;
-
-        if (dt < 300) setBooting(false);
-        else setBootMsg("Loading Data…");
 
         const [prizesData, activitiesData] = await Promise.all([
           fetch(`${API_BASE}/prizes`).then((res) => {
@@ -54,9 +55,12 @@ const App = () => {
         setPrizes(prizesData);
         setActivities(activitiesData);
 
+        if (delayTimer) clearTimeout(delayTimer);
+
         setBooting(false);
       } catch (e) {
-        console.error(e);
+        if (delayTimer) clearTimeout(delayTimer);
+        setBooting(true);
         setBootMsg("Server is not responding.");
         setTimeout(() => setBooting(false), 1500);
       }
