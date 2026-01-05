@@ -98,3 +98,7 @@
   background-color: #fcf0bf;
   transform: scale(0.96);
 }
+
+.date-box {
+  width: 100%;
+}

@@ -283,18 +283,20 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                   }
                 />
                 <span className="modal-form-title mb-2">Date</span>
-                <input
-                  className="cell-input px-3 py-2 mb-2"
-                  type="date"
-                  name="date"
-                  value={newActivity.date}
-                  onChange={(e) =>
-                    setNewActivity((prev) => ({
-                      ...prev,
-                      date: e.target.value,
-                    }))
-                  }
-                />
+                <div className="date-box">
+                  <input
+                    className="cell-input px-3 py-2 mb-2"
+                    type="date"
+                    name="date"
+                    value={newActivity.date}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        date: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
               </div>
               <div className="modal-footer">
                 <button

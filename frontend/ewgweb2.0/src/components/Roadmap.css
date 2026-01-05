@@ -173,11 +173,11 @@
 .modal-close-btn {
   border: none;
   background: transparent;
-  width: 34px;
-  height: 34px;
+  font-size: 20px;
   border-radius: 999px;
   align-items: center;
   justify-content: center;
+  color: var(--gray);
 }
 
 .modal-hint {
