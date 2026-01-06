@@ -227,7 +227,7 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                     className="cell-input px-3 py-2 "
                     type="text"
                     name="activity"
-                    placeholder="Type activity"
+                    placeholder="Type or choose activity"
                     value={newActivity.activity}
                     onChange={(e) => {
                       const value = e.target.value;

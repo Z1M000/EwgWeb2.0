@@ -6,7 +6,8 @@ const AboutUs = () => {
       <span className="title">About Us</span>
       <p className="mt-3 mb-4">
         This site tracks the Emory Women’s Golf points game, where players earn
-        points from practices, tournaments, and other team activities.
+        points from practices, tournaments, and other team activities to unlock
+        prizes.
       </p>
       <div className="icon-wrapper px-5">
         <a href="https://docs.google.com/document/d/1pz1OdZDN2u_cPtey3aIq00W0XO1I0jaTAiYnIDFseB8/edit?tab=t.0">
