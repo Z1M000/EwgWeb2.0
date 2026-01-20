@@ -10,7 +10,8 @@ load_dotenv()
 
 uri = os.getenv("DB_URI")
 client = MongoClient(uri)
-db = client["2025Fall"]
+# db = client["2025Fall"]
+db = client["2026Spring"]
 prizes_col = db["Prizes"]
 print("connected to prize col")
 activities_col = db["Activities"]

@@ -3,11 +3,13 @@ import "./Roadmap.css";
 import { IoMdCheckbox } from "react-icons/io";
 import { FiMinusCircle } from "react-icons/fi";
 import { CgAddR } from "react-icons/cg";
-import type { Prize } from "../App";
+import type { Prize } from "../pages/HomePage";
 import type { Dispatch, SetStateAction } from "react";
+import { type User } from "firebase/auth";
 import { API_BASE } from "../config";
 
 interface Props {
+  user: User | null;
   curPoint: number;
   prizes: Prize[];
   setPrizes: Dispatch<SetStateAction<Prize[]>>;
@@ -15,7 +17,7 @@ interface Props {
 
 export const tempId = () => `tmp_${crypto.randomUUID()}`;
 
-const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
+const Roadmap = ({ user, curPoint, prizes, setPrizes }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const goal = prizes.length > 0 ? prizes[prizes.length - 1].points : 0;
   const pct = Math.min((curPoint / goal) * 100, 100);
@@ -56,6 +58,12 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
     );
   };
 
+  const hasEmptyInputs = () => {
+    return draftPrizes.some(
+      (p) => !p.points || p.points <= 0 || !p.label || p.label.trim() === ""
+    );
+  };
+
   const saveEdit = async () => {
     setSaving(true);
     try {
@@ -75,7 +83,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
       const newMap = new Map(cleaned.map((p) => [p._id, p]));
 
       const toDelete = prizes.filter((p) => !newMap.has(p._id));
-      const toCreate = cleaned.filter((p) => p._id.startsWith("tmp_")); // 新增行
+      const toCreate = cleaned.filter((p) => p._id.startsWith("tmp_")); // new line
       const toUpdate = cleaned.filter((p) => {
         if (p._id.startsWith("tmp_")) return false;
         const old = oldMap.get(p._id);
@@ -137,9 +145,12 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
           <span className="title score-current">{curPoint}</span>
           <span className="score-label body"> / {goal} pts</span>
         </div>
-        <button className="ms-auto edit-btn" onClick={openEdit}>
-          Edit
-        </button>
+
+        {user && (
+          <button className="ms-auto edit-btn" onClick={openEdit}>
+            Edit
+          </button>
+        )}
       </div>
 
       <div className="pb-track">
@@ -174,22 +185,26 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
       </div>
 
       <div className="prize-list mt-3 mx-1">
-        <span className="prize-title">Prizes Details</span>
-        {prizes.map((prize) => {
-          const achieved = curPoint >= prize.points;
-          return (
-            <div
-              key={prize.points}
-              className={`prize-item ${achieved ? "achieved" : ""}`}
-            >
-              <span>
-                - {prize.points} pts, {prize.label}
-              </span>
+        <span className="prize-title">Prizes Details (Spring 26)</span>
+        {prizes.length === 0 ? (
+          <p className="nothing-yet mt-1">No prizes yet</p>
+        ) : (
+          prizes.map((prize) => {
+            const achieved = curPoint >= prize.points;
+            return (
+              <div
+                key={prize.points}
+                className={`prize-item ${achieved ? "achieved" : ""}`}
+              >
+                <span>
+                  - {prize.points} pts, {prize.label}
+                </span>
 
-              {achieved && <IoMdCheckbox className="prize-check" />}
-            </div>
-          );
-        })}
+                {achieved && <IoMdCheckbox className="prize-check" />}
+              </div>
+            );
+          })
+        )}
       </div>
 
       {showModal && (
@@ -207,59 +222,78 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
                 </button>
               </div>
               <div className="modal-hint">
-                The goal is the highest-point prize. Non-positive or empty
-                prizes will be removed on save.
+                The goal is the highest-point prize. All prizes must have points
+                and names
               </div>
 
               {/* table */}
               <div className="table-responsive small-text mt-2 mx-2">
-                <table className="table table-borderless align-middle ra-table mb-1">
+                <table className="table table-borderless align-middle mb-1">
                   <thead>
                     <tr>
                       <th className="th-delete"></th>
-                      <th className="th-pts">PTS</th>
-                      <th>PRIZE</th>
+                      <th className="th-pts">Points</th>
+                      <th>Prize</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {draftPrizes.map((item) => (
-                      <tr key={item._id}>
-                        <td className="text-end">
-                          <button
-                            className="delete-btn"
-                            onClick={() => deleteRow(item._id)}
-                          >
-                            <FiMinusCircle />
-                          </button>
-                        </td>
-
-                        <td>
-                          <input
-                            className="cell-input px-1"
-                            type="number"
-                            step="1"
-                            value={item.points || ""}
-                            onChange={(e) => {
-                              const raw = e.target.value;
-                              const newPoints = raw === "" ? 0 : Number(raw);
-                              editPoints(item._id, newPoints);
-                            }}
-                          />
-                        </td>
-
-                        <td>
-                          <input
-                            className="cell-input px-1"
-                            type="text"
-                            value={item.label}
-                            onChange={(e) =>
-                              editLabel(item._id, e.target.value)
-                            }
-                          />
+                    {draftPrizes.length === 0 ? (
+                      <tr>
+                        <td colSpan={3}>
+                          <p className="nothing-yet mx-1 px-4">No prizes yet</p>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      draftPrizes.map((item) => (
+                        <tr key={item._id}>
+                          <td className="text-end">
+                            <button
+                              className="delete-btn"
+                              onClick={() => deleteRow(item._id)}
+                            >
+                              <FiMinusCircle />
+                            </button>
+                          </td>
+
+                          <td>
+                            <input
+                              className="cell-input px-1"
+                              type="number"
+                              step={1}
+                              value={item.points || ""}
+                              onBeforeInput={(e) => {
+                                // prevent decimal or scientific or negative inputs
+                                if (
+                                  e.data === "." ||
+                                  e.data === "e" ||
+                                  e.data === "E" ||
+                                  e.data === "-"
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
+                              onChange={(e) => {
+                                const raw = e.target.value;
+                                const newPoints = raw === "" ? 0 : Number(raw);
+                                editPoints(item._id, newPoints);
+                              }}
+                            />
+                          </td>
+
+                          <td>
+                            <input
+                              className="cell-input px-1"
+                              type="text"
+                              value={item.label}
+                              onChange={(e) =>
+                                editLabel(item._id, e.target.value)
+                              }
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -280,7 +314,7 @@ const Roadmap = ({ curPoint, prizes, setPrizes }: Props) => {
                 <button
                   className="save-btn"
                   onClick={saveEdit}
-                  disabled={saving}
+                  disabled={saving || hasEmptyInputs()}
                 >
                   {saving ? "Saving..." : "Save"}
                 </button>

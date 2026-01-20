@@ -1,11 +1,13 @@
 import "./RecentActivities.css";
 import { useState, useRef, useEffect } from "react";
 import { FiMinusCircle } from "react-icons/fi";
-import type { Activity } from "../App";
+import type { Activity } from "../pages/HomePage";
 import type { Dispatch, SetStateAction } from "react";
 import { API_BASE } from "../config";
+import { type User } from "firebase/auth";
 
 interface Props {
+  user: User | null;
   activities: Activity[];
   setActivities: Dispatch<SetStateAction<Activity[]>>;
 }
@@ -23,7 +25,7 @@ const presetActivities = [
   { name: "Ryder Cup", points: 5 },
 ];
 
-const RecentActivities = ({ activities, setActivities }: Props) => {
+const RecentActivities = ({ user, activities, setActivities }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [savingActivity, setSavingActivity] = useState(false);
@@ -135,18 +137,20 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
     <div className="card my-4 mx-2">
       <div className="ra-header">
         <span className="title">Recent Activities</span>
-        <button
-          type="button"
-          className="edit-btn"
-          onClick={() => setIsEditing((v) => !v)}
-        >
-          {isEditing ? "Done" : "Edit"}
-        </button>
+        {user && (
+          <button
+            type="button"
+            className="edit-btn"
+            onClick={() => setIsEditing((v) => !v)}
+          >
+            {isEditing ? "Done" : "Edit"}
+          </button>
+        )}
       </div>
 
       {/* table */}
       <div className="table-responsive small-text mt-2">
-        <table className="table table-borderless align-middle ra-table">
+        <table className="table table-borderless align-middle">
           <thead className="border-bottom ra-th-text">
             <tr>
               {isEditing && <th></th>}
@@ -172,32 +176,36 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
               </tr>
             )}
 
-            {activitiesWithTotal.map((item, index) => {
-              return (
-                <tr
-                  key={item._id}
-                  className={index % 2 === 1 ? "yellow-row" : ""}
-                >
-                  {isEditing && (
-                    <td>
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => deleteRow(item._id)}
-                        aria-label={`Delete ${item.activity}`}
-                        title="Delete"
-                      >
-                        <FiMinusCircle />
-                      </button>
-                    </td>
-                  )}
-                  <td>{item.activity}</td>
-                  <td className="text-end">{item.points}</td>
-                  <td className="text-end">{item.totalAfter}</td>
-                  <td className="text-end">{formatDate(item.date)}</td>
-                </tr>
-              );
-            })}
+            {activities.length === 0 ? (
+              <p className="nothing-yet mt-2 mx-2">No activities yet</p>
+            ) : (
+              activitiesWithTotal.map((item, index) => {
+                return (
+                  <tr
+                    key={item._id}
+                    className={index % 2 === 1 ? "yellow-row" : ""}
+                  >
+                    {isEditing && (
+                      <td>
+                        <button
+                          type="button"
+                          className="delete-btn"
+                          onClick={() => deleteRow(item._id)}
+                          aria-label={`Delete ${item.activity}`}
+                          title="Delete"
+                        >
+                          <FiMinusCircle />
+                        </button>
+                      </td>
+                    )}
+                    <td>{item.activity}</td>
+                    <td className="text-end">{item.points}</td>
+                    <td className="text-end">{item.totalAfter}</td>
+                    <td className="text-end">{formatDate(item.date)}</td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
@@ -218,7 +226,7 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                 </button>
               </div>
               <div className="modal-hint">
-                Empty or non-positive activity cannot be added
+                Please fill out all required fields
               </div>
               <div className="modal-form m-3">
                 <span className="modal-form-title mb-2">Activity Name</span>
@@ -275,6 +283,17 @@ const RecentActivities = ({ activities, setActivities }: Props) => {
                   value={newActivity.points || ""}
                   name="points"
                   placeholder="e.g., 25"
+                  onBeforeInput={(e) => {
+                    // prevent decimal or scientific or negative inputs
+                    if (
+                      e.data === "." ||
+                      e.data === "e" ||
+                      e.data === "E" ||
+                      e.data === "-"
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={(e) =>
                     setNewActivity((prev) => ({
                       ...prev,

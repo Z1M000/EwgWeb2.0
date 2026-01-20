@@ -12,15 +12,16 @@ if not uri:
 
 # 2) connect db
 client = MongoClient(uri)  # cluster
-db = client["2025Fall"]
+db = client["2026Spring"]
 prizes_col = db["Prizes"]
 activities_col = db["Activities"]
 
 # 3) mock data (Python lists/dicts)
 prizes = [
-  {"points": 150, "label": "Sticker Pack"},
-  {"points": 425, "label": "Team Hat"},
-  {"points": 1150, "label": "Team Hoodie"},
+  {"points": 450, "label": "Ice Cream 🍦"},
+  {"points": 900, "label": "Coffee/Mocha Day 🍵"},
+  {"points": 1350, "label": "Activate 🏃"},
+  {"points": 1750, "label": "Jellycat"},
 ]
 
 activities = [

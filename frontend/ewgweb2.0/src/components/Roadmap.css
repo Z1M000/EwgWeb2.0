@@ -275,3 +275,9 @@
 .cancel-btn:active {
   transform: scale(0.96);
 }
+
+.nothing-yet {
+  color: var(--gray);
+  font-size: 14px;
+  font-style: italic;
+}
