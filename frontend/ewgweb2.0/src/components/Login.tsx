@@ -85,7 +85,7 @@ const Login = () => {
                       Email
                     </label>
                     <input
-                      className="input"
+                      className="cell-input"
                       type="email"
                       id="email"
                       value={email}
@@ -121,7 +121,7 @@ const Login = () => {
                       Email
                     </label>
                     <input
-                      className="input"
+                      className="cell-input"
                       type="email"
                       id="email"
                       value={email}
@@ -135,7 +135,7 @@ const Login = () => {
                       Password
                     </label>
                     <input
-                      className="input"
+                      className="cell-input"
                       type="password"
                       id="password"
                       value={password}
