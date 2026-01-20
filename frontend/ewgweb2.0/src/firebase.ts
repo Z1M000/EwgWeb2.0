@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBtuoRQjFqDzFFZHvfEQrlPrlg4ouBoeY8",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "ewgweb2-a614a.firebaseapp.com",
   projectId: "ewgweb2-a614a",
   storageBucket: "ewgweb2-a614a.firebasestorage.app",

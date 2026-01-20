@@ -176,8 +176,12 @@ const RecentActivities = ({ user, activities, setActivities }: Props) => {
               </tr>
             )}
 
-            {activities.length === 0 ? (
-              <p className="nothing-yet mt-2 mx-2">No activities yet</p>
+            {activities.length === 0 && !isEditing ? (
+              <tr>
+                <td>
+                  <p className="nothing-yet mt-2">No activities yet</p>
+                </td>
+              </tr>
             ) : (
               activitiesWithTotal.map((item, index) => {
                 return (
