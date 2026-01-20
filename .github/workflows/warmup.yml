@@ -1,0 +1,14 @@
+name: Warm Up Fly Backend
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+jobs:
+  warmup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Fly /version
+        run: |
+          curl -sS -m 30 -A "warmup-bot" https://ewgweb2.fly.dev/version || true
