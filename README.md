@@ -10,7 +10,7 @@ Starting in Fall 2025, our team introduced a point system where players earn poi
 
 Before this project, all points were tracked manually on a whiteboard in the players' lounge, making updates slow and the system less transparent.
 
-As the two computer science majors on the team, **Katie** (LinkedIn) and I thought it would be useful to build a digital version of the system, significantly improving efficiency and transparency. We developed the first version of the website during an Emory Hacks hackathon.
+As the two computer science majors on the team, Katie and I thought it would be useful to build a digital version of the system, significantly improving efficiency and transparency. We developed the first version of the website during an Emory Hacks hackathon.
 
 ## Version 2.0
 
